@@ -1,0 +1,46 @@
+with "game_support.gpr";
+
+project Stars is
+
+   type Build_Kind1 is
+      ("default");
+   type Build_Kind is
+      ("default");
+   type Mode_Type is
+      ("Problem", "Solution");
+   Mode : Mode_Type := external ("Mode", "Problem");
+   for Main use ("main");
+   for Object_Dir use "obj";
+   GNAT_SDL_BUILD : Build_Kind := external ("GNAT_SDL_BUILD");
+   GAME_SUPPORT_BUILD : Build_Kind1 := external ("GAME_SUPPORT_BUILD");
+
+   case Mode is
+
+      when "Problem" =>
+
+         case GNAT_SDL_BUILD is
+
+            when "default" =>
+
+               case GAME_SUPPORT_BUILD is
+
+                  when "default" =>
+                     for Source_Dirs use ("src");
+                     for Exec_Dir use ".";
+               end case;
+         end case;
+
+      when "Solution" =>
+         for Source_Dirs use ("sol");
+   end case;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnat12", "-g", "-gnatQ", "-gnateE");
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-E");
+   end Binder;
+
+end Stars;
+
